@@ -12,7 +12,7 @@ If you want to change the configuartion edit:
 
 and restart the service with:
 
-sudo systemctl restart snap.tinyproxy.tinyproxy
+sudo snap restart tinyproxy-ogra
 
 ## URL blocking/filtering
 
