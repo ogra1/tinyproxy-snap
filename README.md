@@ -1,3 +1,5 @@
+[![Snap Status](https://build.snapcraft.io/badge/ogra1/tinyproxy-snap.svg)](https://build.snapcraft.io/user/ogra1/tinyproxy-snap)
+
 # TinyProxy snap
 
 The proxy runs on port 8080 and only allows connections from localhost by default.
