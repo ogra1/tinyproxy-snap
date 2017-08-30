@@ -1,7 +1,15 @@
 name: tinyproxy-ogra
 version: "1.8.3"
-summary: very tiny proxy server
-description: a small http proxy with the ability to manage url black/white lists
+summary: A very tiny proxy server
+description: |
+    A small http proxy with the ability to manage url black/white lists.
+    .
+    To change the configuartion edit /var/snap/tinyproxy/current/tinyproxy.conf
+    and restart the service with "sudo snap restart tinyproxy-ogra"
+    .
+    To define filter rules for blocked urls you can edit /var/snap/tinyproxy/current/filter
+    and restart the service with "sudo snap restart tinyproxy-ogra"
+
 confinement: strict
 grade: stable
 
