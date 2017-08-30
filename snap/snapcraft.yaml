@@ -1,0 +1,18 @@
+name: tinyproxy
+version: "1.0"
+summary: very tiny proxy server
+description: a small http proxy with the ability to manage url black/white lists
+confinement: strict
+grade: stable
+
+apps:
+  tinyproxy:
+    command: ./launcher.sh
+    daemon: simple
+    plugs: [network, network-bind]
+
+parts:
+  tinyproxy:
+    source: .
+    plugin: dump
+    stage-packages: [tinyproxy]
