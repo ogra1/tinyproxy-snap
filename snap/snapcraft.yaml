@@ -1,5 +1,5 @@
-name: tinyproxy
-version: "1.0"
+name: tinyproxy-ogra
+version: "1.8.3"
 summary: very tiny proxy server
 description: a small http proxy with the ability to manage url black/white lists
 confinement: strict
