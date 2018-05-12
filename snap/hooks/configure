@@ -19,13 +19,13 @@ STATFILE="$SNAP/usr/share/tinyproxy/stats.html"
 LOGFILE="$SNAP_DATA/tinyproxy.log"
 FILTERFILE="$SNAP_DATA/filter"
 PIDFILE="$SNAP_DATA/tinyproxy.pid"
-URLVAL="#FilterURLs On"
 
+# toggle Filterurls
+URLVAL="#FilterURLs On"
 [ "$FURLS" = "off" ] || URLVAL="FilterURLs On"
 
+# parse "allow" list into proper format
 ALLOW="$(echo "$ALLOW" | sed 's/,/\\nAllow /g;s/^/Allow /')"
-
-echo "allow is $ALLOW"
 
 # create config file
 sed -e "s;^Port [0-9]*;Port $PORT;"\
@@ -43,4 +43,5 @@ sed -e "s;^Port [0-9]*;Port $PORT;"\
 echo "$FILTERS" | sed 's/ /\n/;s/,/\n/' >"$FILTERFILE"
 touch "$FILTERFILE"
 
+# restart after operation
 snapctl restart tinyproxy-ogra.tinyproxy
