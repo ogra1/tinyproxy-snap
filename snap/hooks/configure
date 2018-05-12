@@ -1,0 +1,46 @@
+#! /bin/sh -e
+
+# get potentially existing values
+PORT="$(snapctl get port)"
+TIMEOUT="$(snapctl get timeout)"
+FILTERS="$(snapctl get filters)"
+FURLS="$(snapctl get filterurls)"
+ALLOW="$(snapctl get allow)"
+
+# set defaults for empty values
+[ -n "$PORT" ] || snapctl set port=8080
+[ -n "$TIMEOUT" ] || snapctl set timeout=600
+[ -n "$FILTERS" ] || snapctl set filters=""
+[ -n "$FURLS" ] || snapctl set filterurls="off"
+[ -n "$ALLOW" ] || snapctl set allow="127.0.0.1"
+
+ERRFILE="$SNAP/usr/share/tinyproxy/default.html"
+STATFILE="$SNAP/usr/share/tinyproxy/stats.html"
+LOGFILE="$SNAP_DATA/tinyproxy.log"
+FILTERFILE="$SNAP_DATA/filter"
+PIDFILE="$SNAP_DATA/tinyproxy.pid"
+URLVAL="#FilterURLs On"
+
+[ "$FURLS" = "off" ] || URLVAL="FilterURLs On"
+
+ALLOW="$(echo "$ALLOW" | sed 's/,/\\nAllow /g;s/^/Allow /')"
+
+echo "allow is $ALLOW"
+
+# create config file
+sed -e "s;^Port [0-9]*;Port $PORT;"\
+    -e "s;^User .*;User root;"\
+    -e "s;^Group .*;Group root;"\
+    -e "s;^Timeout [0-9]*;Timeout $TIMEOUT;"\
+    -e "s;^DefaultErrorFile .*;DefaultErrorFile \"${ERRFILE}\";"\
+    -e "s;^StatFile .*;StatFile \"$STATFILE\";"\
+    -e "s;^Logfile .*;Logfile \"$LOGFILE\";"\
+    -e "s;^#Filter .*;Filter \"$FILTERFILE\";"\
+    -e "s;^Allow 127.0.0.1;$ALLOW;"\
+	-e "s;^[#]*FilterURLs On;$URLVAL;"\
+    -e "s;^PidFile .*;PidFile \"$PIDFILE\";" $SNAP/etc/tinyproxy.conf >$SNAP_DATA/tinyproxy.conf
+
+echo "$FILTERS" | sed 's/ /\n/;s/,/\n/' >"$FILTERFILE"
+touch "$FILTERFILE"
+
+snapctl restart tinyproxy-ogra.tinyproxy

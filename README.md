@@ -6,26 +6,58 @@ The proxy runs on port 8080 and only allows connections from localhost by defaul
 
 ## Configuration
 
-If you want to change the configuartion edit:
+If you want to change the configuartion use the "snap set" command:
 
-/var/snap/tinyproxy/current/tinyproxy.conf
+### Allow
 
-and restart the service with:
+Comma separated list of IPs and networks that can connect to this tinyproxy instance
 
-sudo snap restart tinyproxy-ogra
+Example:
 
-## URL blocking/filtering
+```sudo snap set tinyproxy-ogra allow="127.0.0.1,192.168.0.0/16"```
 
-To define filter rules for blocked urls you can edit:
+Allows acess from localhost and all machines on the 192.168.* networks
 
-/var/snap/tinyproxy/current/filter
+### Filters
 
-and just add domain names or full url paths (you do not need http://)
-to that file and they will be blocked.
+Comma or space separated list of domains or urls to filter
 
-To make the new filters used you need to restart the proxy again with:
+If ```filterurls``` is set to ```off```, use a comma separated list of domain names
 
-sudo systemctl restart snap.tinyproxy.tinyproxy
+Example:
+
+sudo snap set tinyproxy-ogra filters="www.grawert.net,www.ubuntu.com"```
+
+If ```filterurls``` is set to ```on``` use an url list with globbing and pattern matching.
+
+Example:
+
+```sudo snap set tinyproxy-ogra filters="^.*grawert.net/car/,.*ubuntu.com"```
+
+### Filterurls
+
+Either filter by domain names or by urls, if ```filterurls``` is set to ```on``` use url
+patterns, else use domain names.
+
+Example:
+
+```sudo snap set tinyproxy-ogra filterurls="on"```
+
+### Port
+
+Port the proxy listens on, defaults to 8080
+
+Example:
+
+```sudo snap set tinyproxy-ogra port="7990"```
+
+### Timeout
+
+Connection timeout in seconds.
+
+Example:
+
+```sudo snap set tinyproxy-ogra timeout="300"```
 
 ## Logging
 

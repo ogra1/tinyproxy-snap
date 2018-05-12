@@ -15,7 +15,7 @@ grade: stable
 
 apps:
   tinyproxy:
-    command: ./launcher.sh
+    command: usr/sbin/tinyproxy -d -c ${SNAP_DATA}/tinyproxy.conf
     daemon: simple
     plugs: [network, network-bind]
 
