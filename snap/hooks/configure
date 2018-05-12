@@ -37,7 +37,7 @@ sed -e "s;^Port [0-9]*;Port $PORT;"\
     -e "s;^Logfile .*;Logfile \"$LOGFILE\";"\
     -e "s;^#Filter .*;Filter \"$FILTERFILE\";"\
     -e "s;^Allow 127.0.0.1;$ALLOW;"\
-	-e "s;^[#]*FilterURLs On;$URLVAL;"\
+    -e "s;^[#]*FilterURLs On;$URLVAL;"\
     -e "s;^PidFile .*;PidFile \"$PIDFILE\";" $SNAP/etc/tinyproxy.conf >$SNAP_DATA/tinyproxy.conf
 
 echo "$FILTERS" | sed 's/ /\n/;s/,/\n/' >"$FILTERFILE"
