@@ -6,7 +6,18 @@ The proxy runs on port 8080 and only allows connections from localhost by defaul
 
 ## Configuration
 
-If you want to change the configuartion use the "snap set" command:
+If you want to change the configuartion use the "snap set" command.
+To see the current configuratiion use:
+
+```
+$ sudo snap get tinyproxy-ogra
+Key         Value
+allow       127.0.0.1
+filters
+filterurls  off
+port        8080
+timeout     600
+```
 
 ### Allow
 
@@ -26,7 +37,7 @@ If ```filterurls``` is set to ```off```, use a comma separated list of domain na
 
 Example:
 
-sudo snap set tinyproxy-ogra filters="www.grawert.net,www.ubuntu.com"```
+```sudo snap set tinyproxy-ogra filters="www.grawert.net,www.ubuntu.com"```
 
 If ```filterurls``` is set to ```on``` use an url list with globbing and pattern matching.
 
