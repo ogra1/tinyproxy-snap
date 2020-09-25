@@ -74,4 +74,4 @@ Example:
 
 Logs are written to:
 
-/var/snap/tinyproxy/current/tinyproxy.log
+/var/snap/tinyproxy-ogra/current/tinyproxy.log
