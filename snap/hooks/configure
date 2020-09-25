@@ -8,17 +8,31 @@ FURLS="$(snapctl get filterurls)"
 ALLOW="$(snapctl get allow)"
 
 # set defaults for empty values
-[ -n "$PORT" ] || snapctl set port=8080
-[ -n "$TIMEOUT" ] || snapctl set timeout=600
+if [ -z "$PORT" ]; then
+  PORT="8080"
+  snapctl set port="$PORT"
+fi
+if [ -z "$TIMEOUT" ]; then
+  TIMEOUT="600"
+  snapctl set timeout="$TIMEOUT"
+fi
+if [ -z "$ALLOW" ]; then
+  ALLOW="127.0.0.1"
+  snapctl set allow="$ALLOW"
+fi
+if [ -z "$FURLS" ]; then
+  FURLS="off"
+  snapctl set filterurls="$FURLS"
+fi
 [ -n "$FILTERS" ] || snapctl set filters=""
-[ -n "$FURLS" ] || snapctl set filterurls="off"
-[ -n "$ALLOW" ] || snapctl set allow="127.0.0.1"
 
-ERRFILE="$SNAP/usr/share/tinyproxy/default.html"
-STATFILE="$SNAP/usr/share/tinyproxy/stats.html"
-LOGFILE="$SNAP_DATA/tinyproxy.log"
-FILTERFILE="$SNAP_DATA/filter"
-PIDFILE="$SNAP_DATA/tinyproxy.pid"
+S_DATA="/var/snap/${SNAP_NAME}/current"
+S_BIN="/snap/${SNAP_NAME}/current"
+ERRFILE="$S_BIN/usr/share/tinyproxy/default.html"
+STATFILE="$S_BIN/usr/share/tinyproxy/stats.html"
+LOGFILE="$S_DATA/tinyproxy.log"
+FILTERFILE="$S_DATA/filter"
+PIDFILE="$S_DATA/tinyproxy.pid"
 
 # toggle Filterurls
 URLVAL="#FilterURLs On"
@@ -29,8 +43,8 @@ ALLOW="$(echo "$ALLOW" | sed 's/,/\\nAllow /g;s/^/Allow /')"
 
 # create config file
 sed -e "s;^Port [0-9]*;Port $PORT;"\
-    -e "s;^User .*;User root;"\
-    -e "s;^Group .*;Group root;"\
+    -e "s;^User .*;#User;"\
+    -e "s;^Group .*;#Group;"\
     -e "s;^Timeout [0-9]*;Timeout $TIMEOUT;"\
     -e "s;^DefaultErrorFile .*;DefaultErrorFile \"${ERRFILE}\";"\
     -e "s;^StatFile .*;StatFile \"$STATFILE\";"\
@@ -38,10 +52,13 @@ sed -e "s;^Port [0-9]*;Port $PORT;"\
     -e "s;^#Filter .*;Filter \"$FILTERFILE\";"\
     -e "s;^Allow 127.0.0.1;$ALLOW;"\
     -e "s;^[#]*FilterURLs On;$URLVAL;"\
-    -e "s;^PidFile .*;PidFile \"$PIDFILE\";" $SNAP/etc/tinyproxy.conf >$SNAP_DATA/tinyproxy.conf
+    -e "s;^PidFile .*;PidFile \"$PIDFILE\";" $S_BIN/etc/tinyproxy/tinyproxy.conf >$S_DATA/tinyproxy.conf
 
 echo "$FILTERS" | sed 's/ /\n/;s/,/\n/' >"$FILTERFILE"
 touch "$FILTERFILE"
 
-# restart after operation
-snapctl restart tinyproxy-ogra.tinyproxy
+if snapctl services ${SNAP_NAME}.tinyproxy | grep -q inactive; then
+  snapctl start --enable ${SNAP_NAME}.tinyproxy 2>&1 || true
+else
+  snapctl restart ${SNAP_NAME}.tinyproxy
+fi

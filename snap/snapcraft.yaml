@@ -1,5 +1,5 @@
 name: tinyproxy-ogra
-version: "1.8.3"
+adopt-info: tinyproxy
 summary: A very tiny proxy server
 description: |
     A small http proxy with the ability to manage url black/white lists.
@@ -8,17 +8,49 @@ description: |
     options and examples please see the README.md at
     https://github.com/ogra1/tinyproxy-snap/blob/master/README.md
 
+base: core18
 confinement: strict
 grade: stable
 
 apps:
   tinyproxy:
-    command: usr/sbin/tinyproxy -d -c ${SNAP_DATA}/tinyproxy.conf
+    command: usr/sbin/tinyproxy -d -c $SNAP_DATA/tinyproxy.conf
     daemon: simple
-    plugs: [network, network-bind]
+    plugs:
+      - network
+      - network-bind
 
 parts:
   tinyproxy:
     source: .
     plugin: dump
-    stage-packages: [tinyproxy]
+    override-build: |
+      snapcraftctl build
+      # set version
+      CHGLOG="$SNAPCRAFT_PART_INSTALL/usr/share/doc/tinyproxy/changelog.Debian.gz"
+      VER="$(zcat ${CHGLOG} | head -1 | sed 's/^.*(//;s/-.*$//')"
+      echo "setting version to $VER"
+      snapcraftctl set-version "$VER"
+    prime:
+      - -README.md
+      - -etc/cron*
+      - -etc/default*
+      - -etc/init*
+      - -etc/log*
+      - -etc/pam*
+      - -lib
+      - -usr/bin
+      - -usr/lib/tmpfiles.d
+      - -usr/sbin/c*
+      - -usr/sbin/l*
+      - -usr/share/bug
+      - -usr/share/doc/c*
+      - -usr/share/doc/l*
+      - -usr/share/man
+      - -var
+    stage-packages:
+      - tinyproxy
+    build-packages:
+      - coreutils
+      - gzip
+      - sed
